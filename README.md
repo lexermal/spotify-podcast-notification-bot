@@ -29,3 +29,10 @@ Try it out: [MediumNewsBot](t.me/MediumListenerBot)
 
 ## Copyright
 Copyright by Lexermal
+
+
+
+-----------------------------
+
+## Todo
+* Tag blocking gets adapted to block based on title words

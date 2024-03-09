@@ -2,8 +2,8 @@ import ArticleController from "../db/controller/ArticleController";
 import BlacklistController from "../db/controller/BlackListController";
 import SourceController from "../db/controller/SourceController";
 import UserArticleController from "../db/controller/UserArticleController";
-import { Article } from "../db/entity/Article";
-import { Source } from "../db/entity/Source";
+import { Episode } from "../db/entity/Episode";
+import { Source } from "../db/entity/Podcast";
 import { UserArticle } from "../db/entity/UserArticle";
 import Log from "../utils/Logger";
 import BotController from "./BotController";
@@ -19,7 +19,7 @@ export default class ArticleSender {
                 userArticles.map(ua => ArticleController.getArticle(ua.articleId))
             );
 
-            const sendableArticles = await this.getNonBlockedArticles(chatId, articles.filter(a => a !== null) as Article[]);
+            const sendableArticles = await this.getNonBlockedArticles(chatId, articles.filter(a => a !== null) as Episode[]);
 
             await Promise.all(sendableArticles.map(async article => {
                 //find the sourceId
@@ -32,7 +32,7 @@ export default class ArticleSender {
         }));
     }
 
-    getMessage(article: Article, source: Source) {
+    getMessage(article: Episode, source: Source) {
         const hashtags = "#" + article.getTags().join(" #");
         const sourceUrl = SourceController.getUrlOfSource(source);
 
@@ -42,7 +42,7 @@ export default class ArticleSender {
             hashtags;
     }
 
-    sendMessage(chatId: number, article: Article, source: Source) {
+    sendMessage(chatId: number, article: Episode, source: Source) {
         const message = this.getMessage(article, source!);
 
         if (!!article.imageURL) {
@@ -56,7 +56,7 @@ export default class ArticleSender {
         }
     }
 
-    async getNonBlockedArticles(chatId: number, articles: Article[]) {
+    async getNonBlockedArticles(chatId: number, articles: Episode[]) {
         const blockedTags = (await BlacklistController.getBlockedTags(chatId)).map(tag => tag.tag);
 
         return articles.filter(article => {

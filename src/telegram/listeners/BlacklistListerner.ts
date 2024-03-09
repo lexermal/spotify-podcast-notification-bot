@@ -1,7 +1,7 @@
+import BlacklistController from "../../db/controller/BlackListController";
+import { BlacklistedTag } from "../../db/entity/BlacklistedTag";
+import BotController from "../BotController";
 import { Content } from "../Content";
-import { BlacklistedTag } from "../entity/BlacklistedTag";
-import BotController from "../controller/BotController";
-import BlacklistController from "../controller/BlackListController";
 
 export function attachBlacklistListeners() {
 

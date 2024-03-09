@@ -1,7 +1,7 @@
 import { URL } from "url";
-import { ArticleFetcher } from "../../../dal/ArticleFetcher";
+import { ArticleFetcher } from "../../../fetcher/ArticleFetcher";
 import SourceController from "../../../db/controller/SourceController";
-import { Source } from "../../../db/entity/Source";
+import { Source } from "../../../db/entity/Podcast";
 import BotController from "../../BotController";
 import { Content } from "../../Content";
 

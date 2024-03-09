@@ -3,7 +3,7 @@ import { Content } from "../Content";
 import { Source } from "../entity/Source";
 import SourceController from "../controller/SourceController";
 import BotController from "../controller/BotController";
-import { ArticleFetcher } from "../../dal/ArticleFetcher";
+import { ArticleFetcher } from "../../fetcher/ArticleFetcher";
 
 export function attachSourceListeners() {
 

@@ -1,4 +1,4 @@
-import { Source, SourceType } from "../entity/Source";
+import { Source, SourceType } from "../entity/Podcast";
 import DatabaseController from "../DatabaseController";
 import Log from "../../utils/Logger";
 

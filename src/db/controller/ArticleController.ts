@@ -1,19 +1,19 @@
-import { Article } from "../entity/Article";
+import { Episode } from "../entity/Episode";
 import Log from "../../utils/Logger";
 import ArticleSender from "../../telegram/ArticleSender";
 import DatabaseController from "../DatabaseController";
 import SourceController from "./SourceController";
 import UserArticleController from "./UserArticleController";
-import { ArticleFetcher } from "../../dal/ArticleFetcher";
+import { ArticleFetcher } from "../../fetcher/ArticleFetcher";
 
 class _ArticleController {
     fetcher = new ArticleFetcher();
 
     getDBTable() {
-        return DatabaseController.getConnection().getRepository(Article);
+        return DatabaseController.getConnection().getRepository(Episode);
     }
 
-    getArticle(articleId: string): Promise<Article | null> {
+    getArticle(articleId: string): Promise<Episode | null> {
         return this.getDBTable().findOneBy({ articleId });
     }
 
@@ -21,7 +21,7 @@ class _ArticleController {
         return (await this.getDBTable().findOneBy({ articleId: id })) != null;
     }
 
-    async addArticle(chatId: number, sourceId: number, article: Article,) {
+    async addArticle(chatId: number, sourceId: number, article: Episode,) {
 
         if (!await this.exists(article.articleId)) {
 
