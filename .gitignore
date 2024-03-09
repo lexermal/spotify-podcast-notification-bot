@@ -48,3 +48,4 @@ TODO
 macris.sqlite3
 database.sqlite
 bin
+.env
