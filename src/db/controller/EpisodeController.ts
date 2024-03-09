@@ -21,7 +21,6 @@ export default class EpisodeController {
     }
 
     async addEpisode(chatId: number, episode: Episode) {
-
         if (!await this.exists(episode.id)) {
 
             await this.getDBTable().save(episode);
@@ -62,7 +61,6 @@ export default class EpisodeController {
     async startEpisodeSending(sendingDuration: number) {
         this.sendNewEpisodes(sendingDuration);
     }
-
 
     async sendNewEpisodes(sendingDuration: number) {
         Log.info("Start sending new episodes.");

@@ -29,7 +29,10 @@ export class EpisodeFetcher {
         });
         const responseBody = savedShowsResponse.body;
 
-        const shows = responseBody.items.map(show => {
+        //filter out the podcasts that are not from the last 48h
+        const shows = responseBody.items
+        .filter(show => new Date(show.added_at).getTime() > Date.now() - 48 * 60 * 60 * 1000)
+        .map(show => {
             return { id: show.show.id, name: show.show.name, chatId: this.chatID};
         });
 

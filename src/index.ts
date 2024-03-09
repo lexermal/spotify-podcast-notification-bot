@@ -12,18 +12,6 @@ import EpisodeController from './db/controller/EpisodeController';
 
 const app = express();
 
-// endpoint to get the user's subscribed podcasts and their episodes
-async function testFetching(refreshToken: string, telegramUserId: number) {
-    const fetcher = await EpisodeFetcher.init(refreshToken, telegramUserId)
-    const podcasts = await fetcher.getPodcasts();
-
-    const podcastsAndEpisodes = await Promise.all(podcasts.map(async podcast => {
-        const episodes = await fetcher.getLatestEpisodes(podcast);
-        return { podcast, episodes };
-    }));
-    console.log(podcastsAndEpisodes);
-};
-
 // Spotify redirects to this route after authentication
 app.get('/callback', (req, res) => {
     const error = req.query.error;
@@ -40,7 +28,6 @@ app.get('/callback', (req, res) => {
         const user = User.from(chatId, data.body['refresh_token'], Date.now());
         (new UserController()).add(user);
 
-        testFetching(data.body['refresh_token'], chatId);
         res.send('<h1>Congratulations the bot is now connected! As soon as a new episode is comming out you will receive a notification from the bot. You can close this tab.</h1>');
     }).catch(error => {
         Log.error('Error getting access tokens:', error);
@@ -67,7 +54,6 @@ app.listen(3000, () => {
 
         const controller = new EpisodeController();
         controller.startEpisodeFetching(fetchingDuration);
-
         controller.startEpisodeSending(sendingDuration);
     }).catch(e => {
         Log.error(e.message, e);
