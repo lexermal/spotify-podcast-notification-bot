@@ -7,7 +7,7 @@ export class User {
     chatId: number;
 
     @Column()
-    firstName: string;
+    userName: string;
 
     @Column()
     lastUpdated: number;

@@ -1,7 +1,7 @@
 import { Entity, PrimaryGeneratedColumn, Column } from "typeorm";
 
 @Entity()
-export class BlacklistedTag {
+export class BlacklistedKeyword {
 
     @PrimaryGeneratedColumn()
     id: number;
@@ -10,5 +10,5 @@ export class BlacklistedTag {
     chatId: number;
 
     @Column()
-    tag: string;
+    keyword: string;
 }

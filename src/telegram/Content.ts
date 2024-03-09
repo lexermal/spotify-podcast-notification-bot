@@ -1,18 +1,16 @@
 export class Content {
     public static help = `
-   The following commands are available:
+The following commands are available:
 
-/add ***<url>*** - Subscribe to a medium author, publisher, tag or domain.
+/init - Subscribes the bot to your Spotify podcasts.
 
 /list - Get a list of all subscribed sources.
 
-/remove ***<id>*** - Remove a source from your subscribed authors, publishers, tags or domains.
+/block ***<keyword or keyword combinations>*** - Blocks episodes containing a curtain keyword or combination of keywords.
 
-/block ***<tag or tag combinations>*** - Blocks articles that contain a curtain tag or combination of tags.
+/unblock ***<nr>*** - Removes the keyword from the blacklist.
 
-/unblock ***<id>*** - Removes the tag from the blacklist.
-
-/blacklist - Get a list of blocked tags.
+/blacklist - Get a list of blocked keywords.
 
 /help - Show all available commands.
 
@@ -21,53 +19,37 @@ This bot is powered by [Lexermal](https://github.com/lexermal).
 
 
     public static start = `
-    ⚡️ *Medium News Bot* ⚡️
-    Never miss articles of your favorite publishers!
+⚡️ *Spotify Podcast Episode Notifaction Bot* ⚡️
+Never miss episodes of your favorite podcaster and get rid of uninteresting episodes.
 
-    `+ Content.help;
+`+ Content.help;
 
     public static add = `
-    Subscribe to a new Medium publisher, user, tag or domain to receive their new articles.
+Let the bod notify you about new episodes simply with */init*
 
-    It works with */add <url>*
-
-    *Example:*
-    /add https://medium.com/hacker-daily
-
-Hint: If you subscribe to a tag, you will get the latest news of that tag. That are usually many articles.
+*Hint:* You add or remove podcasts in the Spotify app. The bot will then automatically notify you about new episodes.
 
 If you want to see all avaiable commands type /help`;
 
-    public static remove = `
-Remove publishers, users, tags or domains from your subscriptions.
-
-    It works with */remove <id>*
-
-    *Example:*
-    /remove 3   Removes the source with the id 3.`;
-
     public static block = `
-    Blacklist a tag. That way articles containing this tag will not be send to you.
+Blacklist a keyword. That way episodes containing this keyword in the title will not be send to you.
 
-    It works with */block <tag>*
+It works with */block <keyword>*
 
-    *Examples:*
-    /block hello\\_world
-    Articles having this tag will be blocked from getting sent to you.
+*Examples:*
+/block hello\\_world
+Episodes having this keyword will be blocked from getting sent to you.
 
-    /block hello\\_world abc
-    Articles containing booth tags (hello\\_world AND abc) will be blocked.`;
+/block hello\\_world abc
+Episodes containing both keywords (hello\\_world AND abc) will be blocked.`;
 
     public static unblock = `
-Removes a tag from your blocked tags. After unblocking, future articles with this tag will be send.
+Removes a keyword from your blocked keywords. After unblocking, future episodes with this keyword will be send.
 
-    It works with */unblock <id>*
+It works with */unblock <id>*
 
-    *Example:*
+*Example:*
 
-    /unblock 3
-    Removes the tag with the id 3 from your blocked tags.`;
-
-    public static added = `was sucessfully added.
-New articles will be send in short time.`;
+/unblock 3
+Removes the keyword with the id 3 from your blocked keywords.`;
 }

@@ -1,4 +1,4 @@
-import { UserArticle } from "../entity/UserArticle";
+import { UserArticle } from "../entity/UserEpisode";
 import DatabaseController from "../DatabaseController";
 import { MoreThan } from "typeorm";
 

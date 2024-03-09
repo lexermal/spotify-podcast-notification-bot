@@ -4,7 +4,7 @@ import SourceController from "../db/controller/SourceController";
 import UserArticleController from "../db/controller/UserArticleController";
 import { Episode } from "../db/entity/Episode";
 import { Source } from "../db/entity/Podcast";
-import { UserArticle } from "../db/entity/UserArticle";
+import { UserArticle } from "../db/entity/UserEpisode";
 import Log from "../utils/Logger";
 import BotController from "./BotController";
 

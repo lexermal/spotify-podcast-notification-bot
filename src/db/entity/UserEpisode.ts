@@ -10,10 +10,10 @@ export class UserArticle {
     chatId: number;
 
     @Column()
-    articleId: string;
+    episodeId: string;
 
     @Column({ nullable: true })
-    sourceId: number;
+    podcastId: number;
 
     @Column()
     added: number;

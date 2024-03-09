@@ -36,3 +36,5 @@ Copyright by Lexermal
 
 ## Todo
 * Tag blocking gets adapted to block based on title words
+* Refactor ArticleSender.ts
+* Refactor the controllers

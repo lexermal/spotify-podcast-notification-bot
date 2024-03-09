@@ -25,13 +25,12 @@
   },
   "scripts": {
     "dev": "yarn install && export FETCHING_DURATION=0.9 && export SENDING_DURATION=0.3 && yarn prod",
-    "prod": "yarn ts-node --require dotenv/config ./src/EpisodeFetcherMVP.ts"
+    "prod": "yarn ts-node --require dotenv/config ./src/index.ts"
   },
   "keywords": [
     "Spotify",
     "Podcast",
     "Telegram",
     "Bot"
-  ],
-  "homepage": "https://github.com/lexermal/MediumNewsBot"
+  ]
 }

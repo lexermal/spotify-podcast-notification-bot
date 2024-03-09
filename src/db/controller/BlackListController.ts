@@ -1,4 +1,4 @@
-import { BlacklistedTag } from "../entity/BlacklistedTag";
+import { BlacklistedKeyword } from "../entity/BlacklistedKeyword";
 import DatabaseController from "../DatabaseController";
 import Log from "../../utils/Logger";
 import { convertTagToCheckableString, convertToReadableTag } from "../../utils/TagUtils";
@@ -6,7 +6,7 @@ import { convertTagToCheckableString, convertToReadableTag } from "../../utils/T
 class _BacklistController {
 
     getDBTable() {
-        return DatabaseController.getConnection().getRepository(BlacklistedTag);
+        return DatabaseController.getConnection().getRepository(BlacklistedKeyword);
     }
 
     async exists(chatId: number, tag: string) {
@@ -23,7 +23,7 @@ class _BacklistController {
         const tagString = convertTagToCheckableString(rawTagString);
 
         if (!await this.exists(chatId, tagString)) {
-            const tagToBeBlocked = new BlacklistedTag();
+            const tagToBeBlocked = new BlacklistedKeyword();
 
             tagToBeBlocked.chatId = chatId;
             tagToBeBlocked.tag = tagString;
