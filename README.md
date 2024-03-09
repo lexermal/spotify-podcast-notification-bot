@@ -1,38 +1,31 @@
 # Spotify Podcast Bot
 
-Never miss articles of your favorite publishers!
+Never miss episodes of your favorite podcasters!
 
-Try it out: [MediumNewsBot](t.me/MediumListenerBot)
+Try it out: [SpotifyPodcastBot](https://t.me/spotify_podcast_notifier_bot)
 
+## List of available commands
 
-#### List of available commands:
+- ***/block*** `<keyword or keyword combinations>` - Blocks episodes that contain a curtain keyword or combination of keywords.
 
-- ***/add*** `<url>` - Subscribe to a medium author, publisher, tag or domain.
+- ***/unblock*** `<nr>` - Removes the keyword from the blacklist.
 
-- ***/list*** - Get a list of all subscribed sources.
-
-- ***/remove*** `<id>` - Remove a source from your subscribed authors, publishers, tags or domains.
-
-- ***/block*** `<tag or tag combinations>` - Blocks articles that contain a curtain tag or combination of tags.
-
-- ***/unblock*** `<id>` - Removes the tag from the blacklist.
-
-- ***/blacklist*** - Get a list of blocked tags.
+- ***/blacklist*** - Get the list of blocked keywords.
 
 - ***/help*** - Show all available commands.
 
+## Build the image and run the container
 
-## Build the container
-1. ```docker build . -t mediumnewsbot```
+1. ```docker build . -t spotify-podcast-bot:latest```
 2. ```docker compose up -d```
 
+## Environment variables
 
-## Copyright
-Copyright by Lexermal
-
-
-
------------------------------
-
-## Todo
-* Refactor the readme
+```env
+SPOTIFY_CLIENT_ID=your_spotify_client_id
+SPOTIFY_CLIENT_SECRET=yout_spotify_client_secret
+DOMAIN_URL=http://localhost:3000
+TELEGRAF_TOKEN=your_telegram_token
+FETCHING_DURATION=30 # in minutes
+SENDING_DURATION=30 # in minutes
+```

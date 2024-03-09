@@ -2,12 +2,17 @@ version: '3.9'
 
 services:
   web:
-    image: mediumnewsbot
-    container_name: mediumnewsbot
+    image: spotifypodcastbot
+    container_name: spotifypodcastbot
     restart: always
+    ports:
+      - "3000:3000"
     volumes:
-      - /mnt/vol1/mediumnewsbot:/usr/src/app/db
+      - /mnt/vol1/spotifypodcastbot:/usr/src/app/db
     environment:
       TELEGRAF_TOKEN: "my-telegram-bot-token"
       FETCHING_DURATION: 5
       SENDING_DURATION: 3
+      SPOTIFY_CLIENT_ID: "my-spotify-client-id"
+      SPOTIFY_CLIENT_SECRET: "my-spotify-client-secret"
+
