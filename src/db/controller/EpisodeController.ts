@@ -1,6 +1,6 @@
 import { Episode } from "../entity/Episode";
 import Log from "../../utils/Logger";
-import ArticleSender from "../../telegram/ArticleSender";
+import EpisodeSender from "../../telegram/EpisodeSender";
 import DatabaseController from "../DatabaseController";
 import UserEpisodeController from "./UserEpisodeController";
 import { EpisodeFetcher } from "../../fetcher/EpisodeFetcher";
@@ -67,7 +67,7 @@ export default class EpisodeController {
     async sendNewEpisodes(sendingDuration: number) {
         Log.info("Start sending new episodes.");
 
-        await new ArticleSender().sendArticles(sendingDuration);
+        await new EpisodeSender().sendArticles(sendingDuration);
 
         Log.debug(`Finished sending unseen episodes. Waiting ${sendingDuration} minutes.`);
         setTimeout(() => this.sendNewEpisodes(sendingDuration), sendingDuration * 60 * 1000);

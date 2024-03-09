@@ -15,7 +15,7 @@ Click here: *${getSpotifyAuthUrl(chatId.toString())}*.`;
         const tags = await BlacklistController.addKeyword(chatID, keywordString);
 
         return `Successfully blocked the keyword *${tags}*.\r\n` +
-            `You will not receive edisodes containing this keyword in the title anymore.`;
+            `You will not receive episodes containing this keyword in the title anymore.`;
     });
 
     BotController.addListener("block", false, () => Content.block, { disablePreview: true });
