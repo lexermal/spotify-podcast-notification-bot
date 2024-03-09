@@ -1,7 +1,12 @@
 import Log from "../utils/Logger";
 import { Episode } from "../db/entity/Episode";
-import { Podcast } from "../db/entity/Podcast";
 import { setAccessToken, spotifyApi } from "../handler/SpotifyHandler";
+
+interface Podcast {
+    id: string;
+    name: string;
+    chatId: number;
+}
 
 export class EpisodeFetcher {
     private static instance: EpisodeFetcher;
@@ -12,9 +17,7 @@ export class EpisodeFetcher {
     public static async init(refreshToken: string, chatId: number) {
         await setAccessToken(refreshToken);
 
-        if (!EpisodeFetcher.instance) {
-            EpisodeFetcher.instance = new EpisodeFetcher();
-        }
+        EpisodeFetcher.instance = new EpisodeFetcher();
         EpisodeFetcher.instance.chatID = chatId;
         return EpisodeFetcher.instance;
     }
@@ -27,7 +30,7 @@ export class EpisodeFetcher {
         const responseBody = savedShowsResponse.body;
 
         const shows = responseBody.items.map(show => {
-            return Podcast.init(this.chatID, show.show.id, show.show.name);
+            return { id: show.show.id, name: show.show.name, chatId: this.chatID};
         });
 
         Log.debug(`Fetched ${shows.length} of ${responseBody.total} podcasts (${offset / 50 + 1}. bulk) for user ${this.chatID}.`);

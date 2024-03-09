@@ -1,10 +1,10 @@
-import ArticleController from "../db/controller/ArticleController";
+import ArticleController from "../db/controller/EpisodeController";
 import BlacklistController from "../db/controller/BlackListController";
 import SourceController from "../db/controller/SourceController";
-import UserArticleController from "../db/controller/UserArticleController";
+import UserEpisodeController from "../db/controller/UserEpisodeController";
 import { Episode } from "../db/entity/Episode";
 import { Source } from "../db/entity/Podcast";
-import { UserArticle } from "../db/entity/UserEpisode";
+import { UserEpisode } from "../db/entity/UserEpisode";
 import Log from "../utils/Logger";
 import BotController from "./BotController";
 
@@ -16,7 +16,7 @@ export default class ArticleSender {
         await Promise.all(groupedUserArticles.map(async ([chatId, userArticles]) => {
             // get unseed articles of an user
             const articles = await Promise.all(
-                userArticles.map(ua => ArticleController.getArticle(ua.articleId))
+                userArticles.map(ua => ArticleController.getEpisode(ua.articleId))
             );
 
             const sendableArticles = await this.getNonBlockedArticles(chatId, articles.filter(a => a !== null) as Episode[]);
@@ -25,7 +25,7 @@ export default class ArticleSender {
                 //find the sourceId
                 const sourceId = userArticles.find(ua => ua.articleId === article.articleId)!.sourceId;
 
-                this.sendMessage(chatId, article, await SourceController.getSource(sourceId) as Source);
+                this.sendMessage(chatId, article, await SourceController.getPodcast(sourceId) as Source);
             }));
 
             Log.debug(`Sent ${sendableArticles.length} unread articles to ${chatId}.`);
@@ -57,7 +57,7 @@ export default class ArticleSender {
     }
 
     async getNonBlockedArticles(chatId: number, articles: Episode[]) {
-        const blockedTags = (await BlacklistController.getBlockedTags(chatId)).map(tag => tag.tag);
+        const blockedTags = (await BlacklistController.getBlockedKeywords(chatId)).map(tag => tag.tag);
 
         return articles.filter(article => {
             return !blockedTags.some(blockedTag => article.getTags().includes(blockedTag));
@@ -67,14 +67,14 @@ export default class ArticleSender {
     async getUnseenUserArticles(sendingDuration: number) {
         const timestamp = new Date(Date.now() - sendingDuration * 60 * 1000); //now minus x minutes
 
-        const userArticles = await UserArticleController.getUnsendUserArticles(timestamp);
+        const userArticles = await UserEpisodeController.getUnsendUserEpisodes(timestamp);
         Log.debug(`Found ${userArticles.length} new unsent articles.`);
 
         return userArticles;
     }
 
-    groupUserArticles(userArticles: UserArticle[]): [number, UserArticle[]][] {
-        const articles = new Map<number, UserArticle[]>();
+    groupUserArticles(userArticles: UserEpisode[]): [number, UserEpisode[]][] {
+        const articles = new Map<number, UserEpisode[]>();
 
         // group userarticles by chatId
         userArticles.forEach(ua => {

@@ -12,7 +12,7 @@ Click here: *${getSpotifyAuthUrl(chatId.toString())}*.`;
     });
 
     BotController.addListener("block", true, async (chatID, keywordString) => {
-        const tags = await BlacklistController.addTag(chatID, keywordString);
+        const tags = await BlacklistController.addKeyword(chatID, keywordString);
 
         return `Successfully blocked the keyword *${tags}*.\r\n` +
             `You will not receive edisodes containing this keyword in the title anymore.`;
@@ -22,7 +22,7 @@ Click here: *${getSpotifyAuthUrl(chatId.toString())}*.`;
 
     BotController.addListener("unblock", true, async (chatId, keywordNr) => {
 
-        return BlacklistController.removeTag(chatId, keywordNr).then(keyword => {
+        return BlacklistController.removeKeyword(chatId, keywordNr).then(keyword => {
             return `The keyword *${keyword}* was successfully unblocked.`;
         }).catch(error => {
             return error.message;
@@ -32,7 +32,7 @@ Click here: *${getSpotifyAuthUrl(chatId.toString())}*.`;
     BotController.addListener("unblock", false, () => Content.unblock, { disablePreview: true });
 
     BotController.addListener("blacklist", false, async (chatId) => {
-        let keywords = getFormattedList(await BlacklistController.getBlockedTags(chatId));
+        let keywords = getFormattedList(await BlacklistController.getBlockedKeywords(chatId));
 
         if (keywords.length === 0) {
             keywords = "No keywords are blocked.";

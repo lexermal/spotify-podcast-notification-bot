@@ -4,52 +4,47 @@ import DatabaseController from './db/DatabaseController';
 import BotController from './telegram/BotController';
 import { Content } from './telegram/Content';
 import Log from './utils/Logger';
-import { getSpotifyAuthUrl, spotifyApi } from './handler/SpotifyHandler';
+import { spotifyApi } from './handler/SpotifyHandler';
 import { attachBlacklistListeners } from './telegram/Listeners';
+import UserController from './db/controller/UserController';
+import { User } from './db/entity/User';
+import EpisodeController from './db/controller/EpisodeController';
 
 const app = express();
 
-// Redirect users to this route to start the authentication process
-app.get('/login', (_, res) => {
-    res.redirect(getSpotifyAuthUrl('userABC'));
-});
-
 // endpoint to get the user's subscribed podcasts and their episodes
-app.get('/me', async (req, res) => {
-    const refreshToken = req.query.refresh_token as string;
-    const telegramUserId = req.query.telegramUserId as unknown as number;
+async function testFetching(refreshToken: string, telegramUserId: number) {
+    const fetcher = await EpisodeFetcher.init(refreshToken, telegramUserId)
+    const podcasts = await fetcher.getPodcasts();
 
-    try {
-        const fetcher = await EpisodeFetcher.init(refreshToken, telegramUserId)
-        const podcasts = await fetcher.getPodcasts();
-
-        const podcastsAndEpisodes = await Promise.all(podcasts.map(async podcast => {
-            const episodes = await fetcher.getLatestEpisodes(podcast);
-            return { podcast, episodes };
-        }));
-        res.json(podcastsAndEpisodes);
-    } catch (error) {
-        res.status(500).json({ error: 'Error fetching subscribed podcasts and their episodes' });
-    }
-});
+    const podcastsAndEpisodes = await Promise.all(podcasts.map(async podcast => {
+        const episodes = await fetcher.getLatestEpisodes(podcast);
+        return { podcast, episodes };
+    }));
+    console.log(podcastsAndEpisodes);
+};
 
 // Spotify redirects to this route after authentication
 app.get('/callback', (req, res) => {
     const error = req.query.error;
     const code = req.query.code as string;
-    const telegramUserId = req.query.state;
+    const chatId = Number(req.query.state);
 
     if (error) {
-        console.error('Callback Error:', error);
-        res.send(`Callback Error: ${error}`);
+        Log.error('Callback Error:', error);
+        res.send(`The authentification with Spotify did not work: ${error}`);
         return;
     }
 
     spotifyApi.authorizationCodeGrant(code).then(data => {
-        res.redirect(process.env.DOMAIN_URL + `/me?refresh_token=${data.body['refresh_token']}&telegramUserId=${telegramUserId}`);
+        const user = User.from(chatId, data.body['refresh_token'], Date.now());
+        (new UserController()).add(user);
+
+        testFetching(data.body['refresh_token'], chatId);
+        res.send('<h1>Congratulations the bot is now connected! As soon as a new episode is comming out you will receive a notification from the bot. You can close this tab.</h1>');
     }).catch(error => {
-        console.error('Error getting Tokens:', error);
-        res.send(`Error getting Tokens: ${error}`);
+        Log.error('Error getting access tokens:', error);
+        res.send(`Error getting access tokens: ${error}`);
     });
 });
 
@@ -70,9 +65,10 @@ app.listen(3000, () => {
         const fetchingDuration = Number(process.env.FETCHING_DURATION || 5); //minutes
         const sendingDuration = Number(process.env.SENDING_DURATION || 6); //minutes
 
-        // ArticleController.startArticleFetching(fetchingDuration);
+        const controller = new EpisodeController();
+        controller.startEpisodeFetching(fetchingDuration);
 
-        // ArticleController.startArticleSending(sendingDuration);
+        controller.startEpisodeSending(sendingDuration);
     }).catch(e => {
         Log.error(e.message, e);
         process.exit(1);

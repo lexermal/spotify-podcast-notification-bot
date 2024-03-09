@@ -1,7 +1,7 @@
 import { BlacklistedKeyword } from "../entity/BlacklistedKeyword";
 import DatabaseController from "../DatabaseController";
 import Log from "../../utils/Logger";
-import { convertTagToCheckableString, convertToReadableTag } from "../../utils/TagUtils";
+import { convertTagToCheckableString as convertKeywordToCheckableString, convertToReadableTag as convertToReadableKeyword } from "../../utils/TagUtils";
 
 class _BacklistController {
 
@@ -9,56 +9,56 @@ class _BacklistController {
         return DatabaseController.getConnection().getRepository(BlacklistedKeyword);
     }
 
-    async exists(chatId: number, tag: string) {
-        return (await this.getDBTable().findOneBy({ tag, chatId })) != null;
+    async exists(chatId: number, keyword: string) {
+        return (await this.getDBTable().findOneBy({ keyword: keyword, chatId })) != null;
     }
 
-    async getBlockedTags(chatId: number) {
+    async getBlockedKeywords(chatId: number) {
         return await this.getDBTable().findBy({ chatId });
     }
 
-    async addTag(chatId: number, rawTagString: string) {
-        Log.debug(`User ${chatId} is trying to block the tag(s) '${rawTagString}'.`);
+    async addKeyword(chatId: number, rawKeywordString: string) {
+        Log.debug(`User ${chatId} is trying to block the keyword(s) '${rawKeywordString}'.`);
 
-        const tagString = convertTagToCheckableString(rawTagString);
+        const keyword = convertKeywordToCheckableString(rawKeywordString);
 
-        if (!await this.exists(chatId, tagString)) {
-            const tagToBeBlocked = new BlacklistedKeyword();
+        if (!await this.exists(chatId, keyword)) {
+            const keywordToBeBlocked = new BlacklistedKeyword();
 
-            tagToBeBlocked.chatId = chatId;
-            tagToBeBlocked.tag = tagString;
+            keywordToBeBlocked.chatId = chatId;
+            keywordToBeBlocked.keyword = keyword;
 
 
-            await this.getDBTable().save(tagToBeBlocked);
-            Log.info(`Successfully added blocking of the tag '${tagString}' for user ${chatId}.`);
+            await this.getDBTable().save(keywordToBeBlocked);
+            Log.info(`Successfully added blocking of the keyword '${keyword}' for user ${chatId}.`);
         }
 
-        return convertToReadableTag(tagString);
+        return convertToReadableKeyword(keyword);
     }
 
-    async removeTag(chatID: number, index: string): Promise<string> {
+    async removeKeyword(chatID: number, index: string): Promise<string> {
 
         if (!await this.isValidId(chatID, index)) {
             throw Error("The id is not valid.");
         }
 
-        const item = (await this.getBlockedTags(chatID))[Number(index) - 1];
+        const item = (await this.getBlockedKeywords(chatID))[Number(index) - 1];
 
         this.getDBTable().remove(item);
 
-        return convertToReadableTag(item.tag); //=name of tag
+        return convertToReadableKeyword(item.keyword); //=name of keyword
     }
 
     async isValidId(chatId: number, id: string) {
-        const items = await this.getBlockedTags(chatId);
+        const items = await this.getBlockedKeywords(chatId);
 
         if (isNaN(id as unknown as number)) {
-            Log.debug(`The user ${chatId} tried to delete a blocked tag with the invalid id '${id}'.`);
+            Log.debug(`The user ${chatId} tried to delete a blocked keyword with the invalid id '${id}'.`);
             return false;
         }
 
         if (Number(id) < 1 || Number(id) > items.length) {
-            Log.debug(`The user ${chatId} tried to delete a blacked tag with an id that is not in the allowed range: '${id}'.`);
+            Log.debug(`The user ${chatId} tried to delete a blacked keyword with an id that is not in the allowed range: '${id}'.`);
             return false;
         }
         return true;

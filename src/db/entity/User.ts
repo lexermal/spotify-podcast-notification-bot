@@ -7,8 +7,16 @@ export class User {
     chatId: number;
 
     @Column()
-    userName: string;
+    refreshToken: string;
 
     @Column()
     lastUpdated: number;
+
+    static from(chatId: number, refreshToken: string, lastUpdated: number) {
+        const user = new User();
+        user.chatId = chatId;
+        user.refreshToken = refreshToken;
+        user.lastUpdated = lastUpdated;
+        return user;
+    }
 }
