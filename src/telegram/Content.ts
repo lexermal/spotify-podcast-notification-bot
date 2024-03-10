@@ -19,7 +19,7 @@ This bot is powered by [Lexermal](https://github.com/lexermal).
 
 
     public static start = `
-⚡️ *Spotify Podcast Episode Notifaction Bot* ⚡️
+⚡️ *Spotify Podcast Notifier Bot* ⚡️
 
 Never miss episodes of your favorite podcaster and get rid of uninteresting episodes.
 
@@ -53,4 +53,13 @@ It works with */unblock <id>*
 
 /unblock 3
 Removes the keyword with the id 3 from your blocked keywords.`;
+
+public static connection_successful = `
+<html style="background-image: linear-gradient(to left top, #051937, #262e6a, #5c3d99, #a044c1, #ee3cdd); padding: 100px; ">
+<body style="font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol";">
+<center style="margin-top: 2px">
+<h1>Congratulations the Spotify Podcast Notifier Telegram Bot is now connected!</h1>
+<h3>You can close this tab.</h3>
+</center>
+`;
 }

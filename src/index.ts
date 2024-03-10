@@ -29,7 +29,7 @@ app.get('/callback', (req, res) => {
         await (new UserController()).add(user);
         Log.info(`User ${chatId} successfully connected to Spotify.`);
 
-        res.send('<h1>Congratulations the bot is now connected! As soon as a new episode is comming out you will receive a notification from the bot. You can close this tab.</h1>');
+        res.send(Content.connection_successful);
         controller.manualTrigger(chatId);
     }).catch(error => {
         Log.error('Error getting access tokens:', error);
