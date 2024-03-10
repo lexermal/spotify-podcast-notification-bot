@@ -15,4 +15,5 @@ services:
       SENDING_DURATION: 3
       SPOTIFY_CLIENT_ID: "my-spotify-client-id"
       SPOTIFY_CLIENT_SECRET: "my-spotify-client-secret"
+      DOMAIN_URL: http://localhost:3000
 
