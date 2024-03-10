@@ -45,7 +45,7 @@ export default class EpisodeController {
     }
 
     async fetchNewEpisodes(user: User) {
-        Log.info("Starting to fetch new episodes for " + user.chatId);
+        Log.info(`Starting to fetch new episodes for user ${user.chatId}.`);
         const fetcher = await EpisodeFetcher.init(user.refreshToken, user.chatId);
 
         const podcastItems = await fetcher.getPodcasts();

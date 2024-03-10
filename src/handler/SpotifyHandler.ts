@@ -15,7 +15,7 @@ async function setAccessToken(refreshToken: string) {
     spotifyApi.setRefreshToken(refreshToken);
 
     await spotifyApi.refreshAccessToken().then((data) => {
-        Log.debug('The access token has been refreshed!');
+        Log.debug('The access token has been refreshed.');
 
         // Save the access token so that it's used in future calls
         spotifyApi.setAccessToken(data.body['access_token']);

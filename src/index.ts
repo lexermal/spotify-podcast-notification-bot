@@ -1,5 +1,4 @@
 import express from 'express';
-import { EpisodeFetcher } from './fetcher/EpisodeFetcher';
 import DatabaseController from './db/DatabaseController';
 import BotController from './telegram/BotController';
 import { Content } from './telegram/Content';
@@ -34,13 +33,11 @@ app.get('/callback', (req, res) => {
         controller.manualTrigger(chatId);
     }).catch(error => {
         Log.error('Error getting access tokens:', error);
-        res.send(`Error getting access tokens: ${error}`);
+        res.send(`The access token is not valid anymore. Click on the telegram bot link and try again.`);
     });
 });
 
 app.listen(3000, () => {
-    Log.info('The application is running at ' + process.env.DOMAIN_URL);
-
     DatabaseController.initDB().then(() => {
         attachBlacklistListeners();
 
@@ -48,15 +45,17 @@ app.listen(3000, () => {
         BotController.setHelpMessage(() => Content.help);
         BotController.launch();
 
-        Log.info("Successfully started Spotify Podcast Episode Notification bot!");
+        Log.info("Successfully started the Spotify Podcast Notifier bot.");
 
-        Log.info("Starting to fetch new episodes and send out new ones.");
+        Log.info("Started fetching and sending new episodes.");
 
         const fetchingDuration = Number(process.env.FETCHING_DURATION || 5); //minutes
         const sendingDuration = Number(process.env.SENDING_DURATION || 6); //minutes
 
         controller.startEpisodeFetching(fetchingDuration);
         controller.startEpisodeSending(sendingDuration);
+
+        Log.info('The bots callback endpoint is reachable over ' + process.env.DOMAIN_URL + "/callback");
     }).catch(e => {
         Log.error(e.message, e);
         process.exit(1);
