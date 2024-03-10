@@ -2,13 +2,13 @@ version: '3.9'
 
 services:
   web:
-    image: spotifypodcastbot
-    container_name: spotifypodcastbot
+    image: lexermal/spotify-podcast-notifier-bot
+    container_name: spotify-podcast-notifier-bot
     restart: always
     ports:
       - "3000:3000"
     volumes:
-      - /mnt/vol1/spotifypodcastbot:/usr/src/app/db
+      - /tmp/spotify-podcast-notifier-bot:/usr/src/app/db
     environment:
       TELEGRAF_TOKEN: "my-telegram-bot-token"
       FETCHING_DURATION: 5
