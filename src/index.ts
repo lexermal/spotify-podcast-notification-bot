@@ -11,6 +11,7 @@ import { User } from './db/entity/User';
 import EpisodeController from './db/controller/EpisodeController';
 
 const app = express();
+const controller = new EpisodeController();
 
 // Spotify redirects to this route after authentication
 app.get('/callback', (req, res) => {
@@ -24,11 +25,13 @@ app.get('/callback', (req, res) => {
         return;
     }
 
-    spotifyApi.authorizationCodeGrant(code).then(data => {
+    spotifyApi.authorizationCodeGrant(code).then(async data => {
         const user = User.from(chatId, data.body['refresh_token'], Date.now());
-        (new UserController()).add(user);
+        await (new UserController()).add(user);
+        Log.info(`User ${chatId} successfully connected to Spotify.`);
 
         res.send('<h1>Congratulations the bot is now connected! As soon as a new episode is comming out you will receive a notification from the bot. You can close this tab.</h1>');
+        controller.manualTrigger(chatId);
     }).catch(error => {
         Log.error('Error getting access tokens:', error);
         res.send(`Error getting access tokens: ${error}`);
@@ -52,7 +55,6 @@ app.listen(3000, () => {
         const fetchingDuration = Number(process.env.FETCHING_DURATION || 5); //minutes
         const sendingDuration = Number(process.env.SENDING_DURATION || 6); //minutes
 
-        const controller = new EpisodeController();
         controller.startEpisodeFetching(fetchingDuration);
         controller.startEpisodeSending(sendingDuration);
     }).catch(e => {

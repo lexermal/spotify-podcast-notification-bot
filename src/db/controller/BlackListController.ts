@@ -22,7 +22,7 @@ class _BacklistController {
 
         const keyword = convertKeywordToCheckableString(rawKeywordString);
 
-        if (!await this.exists(chatId, keyword)) {
+        if (!(await this.exists(chatId, keyword))) {
             const keywordToBeBlocked = new BlacklistedKeyword();
 
             keywordToBeBlocked.chatId = chatId;

@@ -29,11 +29,8 @@ export class EpisodeFetcher {
         });
         const responseBody = savedShowsResponse.body;
 
-        //filter out the podcasts that are not from the last 48h
-        const shows = responseBody.items
-        .filter(show => new Date(show.added_at).getTime() > Date.now() - 48 * 60 * 60 * 1000)
-        .map(show => {
-            return { id: show.show.id, name: show.show.name, chatId: this.chatID};
+        const shows = responseBody.items.map(show => {
+            return { id: show.show.id, name: show.show.name, chatId: this.chatID };
         });
 
         Log.debug(`Fetched ${shows.length} of ${responseBody.total} podcasts (${offset / 50 + 1}. bulk) for user ${this.chatID}.`);
@@ -50,7 +47,14 @@ export class EpisodeFetcher {
             return { body: { items: [] } };
         });
 
-        return episodesResponse.body.items.map(e => this.toEpisode(podcast, e));
+        // Filter episodes that are older than 48 hours
+        return episodesResponse.body.items
+            .map(e => this.toEpisode(podcast, e))
+            .filter(episode => {
+                const episodeDate = new Date(episode.pubDate);
+                const diff = Math.abs(new Date().getTime() - episodeDate.getTime());
+                return Math.ceil(diff / (1000 * 60 * 60)) < 48;
+            });
     };
 
     private toEpisode(show: Podcast, item: SpotifyApi.EpisodeObjectSimplified) {

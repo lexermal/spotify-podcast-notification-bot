@@ -21,26 +21,30 @@ export default class EpisodeController {
     }
 
     async addEpisode(chatId: number, episode: Episode) {
-        if (!await this.exists(episode.id)) {
+        // console.log(episode)
+        // console.log((await this.getDBTable().findOneBy({ id:episode.id })) )
+
+        if (!(await this.exists(episode.id))) {
 
             await this.getDBTable().save(episode);
             Log.debug(`Added new episode ${episode.id} with the title '${episode.title}'.`);
         }
 
-        UserEpisodeController.add(chatId, episode.showId, episode.id);
+        await UserEpisodeController.add(chatId, episode.showId, episode.id);
     }
 
     startEpisodeFetching(fetchingDuration: number) {
         DatabaseController.getConnection().getRepository(User).find().then(users => {
+            Log.info(`Triggering fetching of new episodes. Next fetch is in ${fetchingDuration} minutes.`);
+
             users.forEach((user, i) => {
-                setTimeout(() => {
-                    this.fetchNewEpisodes(user, fetchingDuration);
-                }, i * 2000);
+                setTimeout(() => this.fetchNewEpisodes(user), i * 3000);
             });
+            setTimeout(() => this.startEpisodeFetching(fetchingDuration), fetchingDuration * 60 * 1000);
         });
     }
 
-    async fetchNewEpisodes(user: User, fetchingDuration: number) {
+    async fetchNewEpisodes(user: User) {
         Log.info("Starting to fetch new episodes for " + user.chatId);
         const fetcher = await EpisodeFetcher.init(user.refreshToken, user.chatId);
 
@@ -52,22 +56,26 @@ export default class EpisodeController {
 
             await Promise.all(episodes.map(episode => this.addEpisode(podcast.chatId, episode)));
         }));
-
-        Log.debug(`Finished fetching new episodes. Waiting for ${fetchingDuration} minutes.`);
-
-        setTimeout(() => this.fetchNewEpisodes(user, fetchingDuration), fetchingDuration * 60 * 1000);
     }
 
     async startEpisodeSending(sendingDuration: number) {
         this.sendNewEpisodes(sendingDuration);
+        setTimeout(() => this.startEpisodeSending(sendingDuration), sendingDuration * 60 * 1000);
     }
 
     async sendNewEpisodes(sendingDuration: number) {
-        Log.info("Start sending new episodes.");
+        Log.info(`Triggering sending of new episodes. Next send is in ${sendingDuration} minutes.`);
 
         await new EpisodeSender().sendArticles(sendingDuration);
 
-        Log.debug(`Finished sending unseen episodes. Waiting ${sendingDuration} minutes.`);
-        setTimeout(() => this.sendNewEpisodes(sendingDuration), sendingDuration * 60 * 1000);
+        Log.debug(`Finished sending unseen episodes.`);
+    }
+
+    async manualTrigger(chatId: number) {
+        Log.info(`Manually triggering fetching of new episodes for user ${chatId}.`);
+
+        const user = await DatabaseController.getConnection().getRepository(User).findOneBy({ chatId });
+        await this.fetchNewEpisodes(user!);
+        await this.sendNewEpisodes(2);
     }
 }

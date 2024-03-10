@@ -20,6 +20,7 @@ This bot is powered by [Lexermal](https://github.com/lexermal).
 
     public static start = `
 ⚡️ *Spotify Podcast Episode Notifaction Bot* ⚡️
+
 Never miss episodes of your favorite podcaster and get rid of uninteresting episodes.
 
 `+ Content.help;

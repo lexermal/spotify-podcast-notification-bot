@@ -20,7 +20,7 @@ class _UserEpisodeController {
 
     async add(chatId: number, podcastId: string, episodeId: string) {
 
-        if (!await this.exists(chatId, episodeId)) {
+        if (!(await this.exists(chatId, episodeId))) {
 
             const userEpisode = new UserEpisode();
 

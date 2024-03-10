@@ -12,7 +12,7 @@ export default class UserController {
     }
 
     async add(user: User) {
-        if (!await this.exists(user.chatId)) {
+        if (!(await this.exists(user.chatId))) {
             await this.getDBTable().save(user);
         }
     }
