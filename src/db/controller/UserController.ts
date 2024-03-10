@@ -14,6 +14,8 @@ export default class UserController {
     async add(user: User) {
         if (!(await this.exists(user.chatId))) {
             await this.getDBTable().save(user);
+        } else {
+            await this.getDBTable().update(user.chatId, user);
         }
     }
 }
