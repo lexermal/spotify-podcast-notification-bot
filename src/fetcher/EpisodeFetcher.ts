@@ -73,11 +73,11 @@ export class EpisodeFetcher {
     }
 
     private prepareDescription(text: string) {
-        if (text.length < 150) {
+        if (text.length < 200) {
             return text;
         }
 
-        const shortenedString = text.substring(0, 150);
+        const shortenedString = text.substring(0, 200);
         const lastSpace = shortenedString.lastIndexOf(" ");
 
         return shortenedString.substring(0, lastSpace) + "...";
