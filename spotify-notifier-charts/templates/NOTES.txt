@@ -1,0 +1,67 @@
+Thank you for installing {{ .Chart.Name }} version {{ .Chart.Version }}.
+
+Your Spotify Podcast Notification Bot is now deployed!
+
+{{- if .Values.env }}
+The bot is configured with the following settings:
+{{- if (index .Values.env 0) }}
+- Telegram Bot Token: {{ index (index .Values.env 0) "value" }}
+{{- end }}
+{{- if (index .Values.env 1) }}
+- Fetching Duration: {{ index (index .Values.env 1) "value" }} minutes
+{{- end }}
+{{- if (index .Values.env 2) }}
+- Sending Duration: {{ index (index .Values.env 2) "value" }} minutes
+{{- end }}
+{{- if (index .Values.env 3) }}
+- Spotify Integration Client ID: {{ index (index .Values.env 3) "value" }}
+{{- end }}
+{{- if (index .Values.env 5) }}
+- Domain URL: {{ index (index .Values.env 5) "value" }}
+
+Application URL: {{ index (index .Values.env 5) "value" }}/callback
+{{- end }}
+{{- else }}
+IMPORTANT: No environment variables were found!
+You need to provide environment variables using a values.local.yaml file.
+
+Example:
+```
+helm upgrade spotify-notifier ./spotify-notifier-charts --install -f ./spotify-notifier-charts/values.local.yaml -n spotify-notifier --create-namespace
+```
+
+See the README.md file for more information on creating a values.local.yaml file.
+{{- end }}
+
+The bot's data is stored in a persistent volume, which means your users' preferences and settings will be maintained even if the pod restarts.
+
+To access your bot in Telegram, search for the bot with the token provided in the configuration.
+
+{{- if .Values.tls.enabled }}
+Your application is configured to use HTTPS for secure access.
+{{- end }}
+
+For any issues or questions, please refer to the project's GitHub repository: https://github.com/lexermal/spotify-podcast-notification-bot
+
+1. Get the application URL by running these commands:
+{{- if .Values.ingress.enabled }}
+{{- range $host := .Values.ingress.hosts }}
+  {{- range .paths }}
+  https://{{ $host.host }}{{ .path }}
+  {{- end }}
+{{- end }}
+{{- else if contains "NodePort" .Values.service.type }}
+  export NODE_PORT=$(kubectl get --namespace {{ .Release.Namespace }} -o jsonpath="{.spec.ports[0].nodePort}" services {{ include "spotify-notifier-charts.fullname" . }})
+  export NODE_IP=$(kubectl get nodes --namespace {{ .Release.Namespace }} -o jsonpath="{.items[0].status.addresses[0].address}")
+  echo http://$NODE_IP:$NODE_PORT
+{{- else if contains "LoadBalancer" .Values.service.type }}
+     NOTE: It may take a few minutes for the LoadBalancer IP to be available.
+           You can watch its status by running 'kubectl get --namespace {{ .Release.Namespace }} svc -w {{ include "spotify-notifier-charts.fullname" . }}'
+  export SERVICE_IP=$(kubectl get svc --namespace {{ .Release.Namespace }} {{ include "spotify-notifier-charts.fullname" . }} --template "{{"{{ range (index .status.loadBalancer.ingress 0) }}{{.}}{{ end }}"}}")
+  echo http://$SERVICE_IP:{{ .Values.service.port }}
+{{- else if contains "ClusterIP" .Values.service.type }}
+  export POD_NAME=$(kubectl get pods --namespace {{ .Release.Namespace }} -l "app.kubernetes.io/name={{ include "spotify-notifier-charts.name" . }},app.kubernetes.io/instance={{ .Release.Name }}" -o jsonpath="{.items[0].metadata.name}")
+  export CONTAINER_PORT=$(kubectl get pod --namespace {{ .Release.Namespace }} $POD_NAME -o jsonpath="{.spec.containers[0].ports[0].containerPort}")
+  echo "Visit http://127.0.0.1:8080 to use your application"
+  kubectl --namespace {{ .Release.Namespace }} port-forward $POD_NAME 8080:$CONTAINER_PORT
+{{- end }}

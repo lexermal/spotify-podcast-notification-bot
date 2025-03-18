@@ -49,3 +49,7 @@ macris.sqlite3
 database.sqlite
 bin
 .env
+
+# Helm charts
+spotify-notifier-charts/values.local.yaml
+**/values.local.yaml
